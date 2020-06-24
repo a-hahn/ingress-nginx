@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-dashboard
+  namespace: kube-system
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/auth-url: http://demo-auth-service.default.svc.cluster.local?perms=view
+    nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+spec:
+  tls:
+  - hosts:
+    - dashboard.oops.de
+    secretName: oops-secret-tls
+  rules:
+  - host: dashboard.oops.de
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 443
+        path: /
+
+---
